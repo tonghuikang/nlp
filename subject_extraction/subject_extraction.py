@@ -1,6 +1,6 @@
 from trigram_tagger import SubjectTrigramTagger
-from bs4 import BeautifulSoup
-import requests
+# from bs4 import BeautifulSoup
+# import requests
 import re
 import pickle
 import nltk
@@ -13,15 +13,15 @@ stop = stopwords.words('english')
 NOUNS = ['NN', 'NNS', 'NNP', 'NNPS']
 VERBS = ['VB', 'VBG', 'VBD', 'VBN', 'VBP', 'VBZ']
 
-def download_document(url):
-    """Downloads document using BeautifulSoup, extracts the subject and all
-    text stored in paragraph tags
-    """
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, 'html.parser')
-    title = soup.find('title').get_text()
-    document = ' '.join([p.get_text() for p in soup.find_all('p')])
-    return document
+# def download_document(url):
+#     """Downloads document using BeautifulSoup, extracts the subject and all
+#     text stored in paragraph tags
+#     """
+#     r = requests.get(url)
+#     soup = BeautifulSoup(r.text, 'html.parser')
+#     title = soup.find('title').get_text()
+#     document = ' '.join([p.get_text() for p in soup.find_all('p')])
+#     return document
 
 def clean_document(document):
     """Remove enronious characters. Extra whitespace and stop words"""
@@ -69,7 +69,7 @@ def extract_subject(document):
     # and most frequent nouns. It takes the first element in the list
     subject_nouns = [entity for entity in top_10_entities
                     if entity.split()[0] in most_freq_nouns]
-    print subject_nouns
+    print(subject_nouns)
     return subject_nouns[0]
 
 def trained_tagger(existing=False):
@@ -94,7 +94,7 @@ def trained_tagger(existing=False):
 
 def tag_sentences(subject, document):
     """Returns tagged sentences using POS tagging"""
-    trigram_tagger = trained_tagger(existing=True)
+    trigram_tagger = trained_tagger(existing=True) # need to set to False in first run
 
     # Tokenize Sentences and words
     sentences = tokenize_sentences(document)
@@ -152,13 +152,13 @@ def get_svo(sentence, subject):
     return {}
 
 if __name__ == '__main__':
-    url = 'http://www.nytimes.com/2016/06/13/us/politics/bernie-sanders-campaign.html?hp&action=click&pgtype=Homepage&clickSource=story-heading&module=first-column-region&region=top-news&WT.nav=top-news'
-    document = download_document(url)
+#     url = 'http://www.nytimes.com/2016/06/13/us/politics/bernie-sanders-campaign.html?hp&action=click&pgtype=Homepage&clickSource=story-heading&module=first-column-region&region=top-news&WT.nav=top-news'
+    document = (u"Singapore’s IT sector was flooded with the influx of cheap foreign professionals and resulted in depressed wages and long working hours.")
     # document = pickle.load(open('document.pkl', 'rb'))
-    print document
+    print(document)
     document = clean_document(document)
     subject = extract_subject(document)
-    print subject
+    print("subjects {}".format(subject))
 
     tagged_sents = tag_sentences(subject, document)
 
@@ -166,4 +166,4 @@ if __name__ == '__main__':
                         for sentence in tagged_sents]
     for svo in svos:
         if svo:
-            print svo
+            print(svo)
